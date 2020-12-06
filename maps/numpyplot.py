@@ -15,23 +15,27 @@ if len(statefiles) < 1:
     sys.exit(1)
 print('found:', statefiles)
 
-archs=[]
 arch2name = uarch.short_to_long
 
 all_states = dict()
 
 for statefile in statefiles:
     state=ujson.load(open(statefile))
+    if not state['final']:
+        print('Skipping, not complete')
+        continue
     this_arch=state['uarch']
     print('datafile: %s uarch: %s' % (statefile,this_arch))
-    archs.append(this_arch)
     if this_arch not in arch2name:
         print('WARNING: no human-friendly name for %s' % this_arch)
     if this_arch in all_states:
-        raise Exception('Duplicate data for uarch %s' % this_arch)
+        if len(all_states[this_arch]['baseline_list']) > len(state['baseline_list']):
+            print('Skipping, already seen file with more data for this uarch')
+            continue
+        print('Ignoring previous file with less data for this uarch')
     all_states[this_arch] = state
 
-nsubplots=len(archs)
+nsubplots=len(all_states)
 subplot=0
 
 fig,axes = plt.subplots(nrows=1,ncols=nsubplots,figsize=(14,4))
@@ -40,7 +44,7 @@ assert nsubplots > 0
 if nsubplots == 1:
     axes=(axes,)
 
-for (arch,ax) in zip(archs,axes):
+for (arch,ax) in zip(list(all_states),axes):
     subplot+=1
     print(arch)
     state=all_states[arch]

@@ -33,9 +33,30 @@ else
     uarch="$1"
 fi
 
+echo "Run full or quick test?"
+echo "Full test:  ALL instructions in NxN combinations, and many iterations"
+echo "            for high quality signal. This can take a long time (few hours)."
+echo "Quick test: 500 instructions in NxN combinations, and fewer iterations"
+echo "            than in Full mode. This should take a coffee amount of time."
+echo -n "Full or Quick? (f/Q) "
+read fullquick
+if [ "$fullquick" = f -o "$fullquick" = F ]
+then    modename=full
+        iterations=2000
+        instrs_cutoff=0
+elif [ "$fullquick" = q -o "$fullquick" = Q -o "$fullquick" = "" ]
+then    modename=quick
+        iterations=200
+        instrs_cutoff=500
+else
+        echo "Do not understand response"
+        exit 1
+fi
+
+echo "Mode: $modename Measurement iterations: $iterations Try how many instructions: $instrs_cutoff"
+
 asmfile=s/out-$uarch.S
 exe=bin/test-$uarch-$uniqid
-iterations=2000
 
 echo uarch: $uarch asmfile: $asmfile executable: $exe
 if [ ! -s $asmfile ]
@@ -54,7 +75,7 @@ echo "Compiling with C test program done"
 echo "Executing test program in all combinations, doing $iterations iterations"
 echo "If anything goes wrong here, re-run the command from the shellscript without the progressbar argument to see verbose output."
 set -x
-$python testall.py ./$exe testall $uarch $iterations progressbar
+$python testall.py ./$exe testall $uarch $iterations $instrs_cutoff  progressbar
 set +x
 echo "Executing test program in all combinations done"
 

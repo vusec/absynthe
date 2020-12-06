@@ -12,7 +12,12 @@ import tqdm
 from io import StringIO
 from scipy import stats
 import xml.etree.ElementTree as ET
-import affinity
+try:
+    import affinity
+except:
+    print('Importing of affinity module failed.')
+    print('Please check the installation instructions in README.md.')
+    sys.exit(1)
 
 if __name__ != "__main__":
     raise Exception('not intended for import but for execution')
@@ -65,11 +70,23 @@ def usage():
     print('        %s plot' % sys.argv[0])
     sys.exit(1)
 
+def save_state(state, state_json_fn, unreliable_set, baseline_list, num_measurements,
+    n_instructions, uarch, pickle_files, final):
+        with open(state_json_fn, 'w') as fp:
+               state['unreliable_set'] = list(unreliable_set)
+               state['baseline_list'] = baseline_list
+               state['iterations'] = num_measurements
+               state['instructions'] = n_instructions
+               state['uarch'] = uarch
+               state['pickle_files'] = pickle_files
+               state['final'] = final
+               ujson.dump(state, fp)
+
 def acquire(exe, uarch, num_measurements, with_progressbar, n_instructions=None):
     disable_progressbar = not with_progressbar
     writerfailstring, baseline_list=getconfig(exe)
 
-    if n_instructions != None:
+    if n_instructions != None and n_instructions != 0:
         print('truncating baseline list of %d to %d' % (len(baseline_list),n_instructions), file=sys.stderr)
         baseline_list = sorted(baseline_list)[0:n_instructions]
     else:
@@ -88,6 +105,10 @@ def acquire(exe, uarch, num_measurements, with_progressbar, n_instructions=None)
         state=dict()
         unreliable_set=set()
         pickle_files=dict()
+        state['final'] = False
+    if state['final']:
+        print('acquire done')
+        return
 
     work_cpus = get_work_cpus()
     work_threads=work_cpus[0]
@@ -100,14 +121,8 @@ def acquire(exe, uarch, num_measurements, with_progressbar, n_instructions=None)
     assert 0 not in reliable_list
     writerlist = [0] + reliable_list
     for write in tqdm.tqdm(writerlist, disable=disable_progressbar):
-        with open(state_json_fn, 'w') as fp:
-               state['unreliable_set'] = list(unreliable_set)
-               state['baseline_list'] = baseline_list
-               state['iterations'] = num_measurements
-               state['instructions'] = n_instructions
-               state['uarch'] = uarch
-               state['pickle_files'] = pickle_files
-               ujson.dump(state, fp)
+        save_state(state, state_json_fn, unreliable_set, baseline_list, num_measurements,
+                n_instructions, uarch, pickle_files, final=False)
         fn_summary='ccgrid/write%d-n%d-i%d-%s-summary.pickle' % (write, num_measurements, n_instructions, uarch)
         data_updated=False
         alldata_summary=dict()
@@ -234,6 +249,8 @@ def acquire(exe, uarch, num_measurements, with_progressbar, n_instructions=None)
           pickle_files[fn_summary] = {'writer': write }
           if disable_progressbar:
             print('writing done')
+    save_state(state, state_json_fn, unreliable_set, baseline_list, num_measurements,
+                n_instructions, uarch, pickle_files, final=True)
 
 parsed_root=None
 
@@ -321,6 +338,9 @@ def aggregate(with_progressbar):
         disable_progressbar = not with_progressbar
         for statefile in sorted(glob.glob('state/state-test-*json')):
             state=ujson.load(open(statefile))
+            if not state['final']:
+                print('incomplete acquisition; skipping')
+                return
             uarch=state['uarch']
             assert len(uarch) == 3 or len(uarch) == 4
             baseline_list=state['baseline_list']
@@ -340,7 +360,7 @@ def aggregate(with_progressbar):
             print('uarch:', uarch, 'summaries:', len(all_files), file=sys.stderr)
             if len(all_files) < 1:
                 print('no data found', file=sys.stderr)
-                raise Exception('no data files found in ccgrid/ for uarch %s' % uarch)
+                raise Exception('no data files found specified in the state file %s for %s' % (statefile,uarch))
             print('reading source data')
             for fn in tqdm.tqdm(sorted(all_files), disable=disable_progressbar):
                 n+=1
@@ -385,8 +405,7 @@ def aggregate(with_progressbar):
             nxn_medians = numpy.zeros((n,n)) #reader, writer
             assert 0 in alldata_by_writers
             w=0
-            if disable_progressbar:
-                print('writing ', end=' ')
+            print('collecting data into aggregated matrix')
             for writeno in tqdm.tqdm(valid_list_orig, disable=disable_progressbar):
                 w+=1
                 if disable_progressbar:
@@ -418,8 +437,6 @@ def aggregate(with_progressbar):
 if __name__ == "__main__":
     global killall, measurements, warmup, devnull
     killall='/usr/bin/killall'
-    measurements=5
-    warmup=5
     devnull=open('/dev/null', 'w')
     if not os.path.exists(killall):
         raise Exception('need killall binary')
@@ -429,10 +446,11 @@ if __name__ == "__main__":
         progressbar=True
     else:
         progressbar=False
-    if len(sys.argv) >= 5 and sys.argv[2] == 'testall':
+    if len(sys.argv) >= 6 and sys.argv[2] == 'testall':
         exe=sys.argv[1]
         uarch=sys.argv[3]
         num_measurements=int(sys.argv[4])
-        acquire(exe, uarch, num_measurements, progressbar)
+        n_instructions=int(sys.argv[5])
+        acquire(exe, uarch, num_measurements, progressbar, n_instructions)
     if sys.argv[1] == 'aggregate':
         aggregate(progressbar)
