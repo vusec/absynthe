@@ -309,19 +309,19 @@ def unsparse_list_sorted(valid_list,arch):
         ports_instr_map[porttuple].add(lineno)
     unsparse_list=[]
     title_list=[]
-    tuplist=[]
-    tuplist = ["0", "1", "5", "01"] # , "05", "15"]
+    print('valid port sets for %s:' % arch)
+    tuplist_default=[]
+    for p in sorted(ports_instr_map, key=lambda x: len(ports_instr_map[x]), reverse=True):
+        print('   port set %-20s, matching instructions %d' % (p, len(ports_instr_map[p])))
+        tuplist_default.append(''.join(p))
     if arch == 'ZEN+':
         tuplist =  ["0", "2", "3", "03"]
     elif arch == 'BDW':
         tuplist = ["0", "1", "5", "01"] # , "05", "15"]
-    elif arch == 'KBL':
-        tuplist = ["0156", "06", "01", "5", "0123", "0123456"]
     else:
+        tuplist=tuplist_default[0:4]
         print('WARNING: you probably want to customize the list of\nexecution ports to filter and group by, using default',file=sys.stderr)
-    print('valid port sets for %s:' % arch)
-    for p in sorted(ports_instr_map, key=lambda x: len(ports_instr_map[x]), reverse=True):
-        print('   port set %-20s, matching instructions %d' % (p, len(ports_instr_map[p])))
+        print('picking default of %s' % tuplist)
     for tup in tuplist:
         if tuple(tup) in ports_instr_map:
             title_list+=[(len(unsparse_list),tup)]
