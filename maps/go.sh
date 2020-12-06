@@ -23,10 +23,21 @@ then    echo "Usage: $0 <uarch>"
         echo "<uarch> should be specified using the three-letter convention (e.g. SKL)."
         echo "The arch should be an arch that instructions.xml knows about, i.e.: "
         xmlstarlet sel -t -m "//architecture" -v "@name" -n <$xml | sort | uniq
-        uarch=`$python uarch.py`
-        echo -n "Detected uarch $uarch. Continue with uarch $uarch? (y/n) "
+        uarch="`$python uarch.py || true`"
+        if [ "$uarch" != "" ]
+        then
+            echo -n "Detected uarch $uarch. Continue with uarch $uarch? (y/n) "
+        else
+            uarch=SNB
+            echo "Could not detect uarch TLA. But that doesn't mean we don't have it."
+            echo ""
+            echo "If you know it, you can supply your uarch (or best-match uarch)"
+            echo "as TLA as arg to this script. Or we can continue with a,"
+            echo "hopefully reasonable, 'old' TLA uarch $uarch."
+            echo -n "Continue with subset uarch $uarch? (y/n) "
+        fi
         read yn
-        if [ $yn != y ]
+        if [ "$yn" != y ]
         then exit 1
         fi
 else

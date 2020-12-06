@@ -319,7 +319,7 @@ def unsparse_list_sorted(valid_list,arch):
     elif arch == 'BDW':
         tuplist = ["0", "1", "5", "01"] # , "05", "15"]
     else:
-        tuplist=tuplist_default[0:4]
+        tuplist=tuplist_default[0:7]
         print('WARNING: you probably want to customize the list of\nexecution ports to filter and group by, using default',file=sys.stderr)
         print('picking default of %s' % tuplist)
     for tup in tuplist:
