@@ -442,6 +442,12 @@ if __name__ == "__main__":
     global killall, measurements, warmup, devnull
     killall='/usr/bin/killall'
     devnull=open('/dev/null', 'w')
+    load1, load5, laod15 = os.getloadavg()
+    if load1 > 0.6:
+        print('Please run me only on an idle system.')
+        print('Found 1 minute load average of %.1f' % load1)
+        print('This is protection against old measurement processes\nlingering and corrupting new measurements.')
+        sys.exit(1)
     if not os.path.exists(killall):
         raise Exception('need killall binary')
     if len(sys.argv) < 2:

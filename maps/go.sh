@@ -1,7 +1,6 @@
 set -e
 ulimit -c 0
 
-uniqid=`git rev-parse HEAD`
 xml=instructions.xml
 python=./env/bin/python
 
@@ -67,7 +66,7 @@ fi
 echo "Mode: $modename Measurement iterations: $iterations Try how many instructions: $instrs_cutoff"
 
 asmfile=s/out-$uarch.S
-exe=bin/test-$uarch-$uniqid
+exe=bin/test-absynthe-$uarch
 
 echo uarch: $uarch asmfile: $asmfile executable: $exe
 if [ ! -s $asmfile ]
