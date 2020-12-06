@@ -189,7 +189,7 @@ def acquire(exe, uarch, num_measurements, with_progressbar, n_instructions=None)
             if disable_progressbar:
                 print('acquiring done', len(acquire_list))
             if writerfailstring in out:
-                print('writer failed:', write, 'output bytes:', len(out), 'err:', len(err), 'unreliable set:', len(unreliable_set))
+                print('\nwriter failed:', write, 'output bytes:', len(out), 'err:', len(err), 'unreliable set:', len(unreliable_set))
                 writerfail=True
                 break
             f = StringIO(out)
