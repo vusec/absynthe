@@ -51,6 +51,8 @@ int main(int argc, char *argv[])
         uint64_t *functable_readers = (uint64_t *) &readlabels;
         uint64_t *stringtable = (uint64_t *) &readstringlabels;
 
+        setsid();
+
         uint64_t *functable_writing = (uint64_t *) &writelabels;
 
         static unsigned int measurements_data[MAXTIME];

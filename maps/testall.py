@@ -176,6 +176,7 @@ def acquire(exe, uarch, num_measurements, with_progressbar, n_instructions=None)
             except subprocess.TimeoutExpired:
                     if disable_progressbar:
                         print('timeout')
+                    os.killpg(os.getpgid(p.pid), signal.SIGKILL)
                     subprocess.call([ killall, '-9', os.path.basename(exe)], stdout=devnull, stderr=devnull)
                     p.kill()
                     try:
