@@ -178,7 +178,10 @@ def acquire(exe, uarch, num_measurements, with_progressbar, n_instructions=None)
                         print('timeout')
                     subprocess.call([ killall, '-9', os.path.basename(exe)], stdout=devnull, stderr=devnull)
                     p.kill()
-                    out,err = p.communicate()
+                    try:
+                        out,err = p.communicate(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        raise Exception('read timeout after process was killed?')
             out = out.decode('ascii')
             err = err.decode('ascii')
             if disable_progressbar:
