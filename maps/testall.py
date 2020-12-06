@@ -445,9 +445,11 @@ if __name__ == "__main__":
     killall='/usr/bin/killall'
     devnull=open('/dev/null', 'w')
     load1, load5, laod15 = os.getloadavg()
-    if load1 > 0.6:
+    limit=0.6
+    if load1 > limit:
         print('Please run me only on an idle system.')
         print('Found 1 minute load average of %.1f' % load1)
+        print('Expecting max 1 minute load average of %.1f' % limit)
         print('This is protection against old measurement processes\nlingering and corrupting new measurements.')
         sys.exit(1)
     if not os.path.exists(killall):
