@@ -9,6 +9,7 @@ import ujson
 import cpus
 import numpy
 import tqdm
+import signal
 from io import StringIO
 from scipy import stats
 import xml.etree.ElementTree as ET
