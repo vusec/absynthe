@@ -1,0 +1,5 @@
+numpy==1.18.1
+pkg-resources==0.0.0
+scipy==1.4.1
+six==1.14.0
+ujson==1.35

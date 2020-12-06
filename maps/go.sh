@@ -1,0 +1,72 @@
+set -e
+ulimit -c 0
+
+uniqid=`git rev-parse HEAD`
+xml=instructions.xml
+python=./env/bin/python
+
+if [ ! -e $xml ]
+then
+        echo "Please run this script from the same directory as $xml is in."
+        exit 1
+fi
+
+if [ ! -x $python ]
+then
+        echo "Could not find python interpreter at $python. Please see README.md to set it up."
+        exit 1
+fi
+
+
+if [ "$#" -ne 1 ]
+then    echo "Usage: $0 <uarch>"
+        echo "<uarch> should be specified using the three-letter convention (e.g. SKL)."
+        echo "The arch should be an arch that instructions.xml knows about, i.e.: "
+        xmlstarlet sel -t -m "//architecture" -v "@name" -n <$xml | sort | uniq
+        uarch=`$python uarch.py`
+        echo -n "Detected uarch $uarch. Continue with uarch $uarch? (y/n) "
+        read yn
+        if [ $yn != y ]
+        then exit 1
+        fi
+else
+    uarch="$1"
+fi
+
+asmfile=s/out-$uarch.S
+exe=bin/test-$uarch-$uniqid
+iterations=2000
+
+echo uarch: $uarch asmfile: $asmfile executable: $exe
+if [ ! -s $asmfile ]
+then	echo "Generating assembly file $asmfile"
+	$python xmlToAssembler.py $uarch >s/out-$uarch.S
+	echo "Generating assembly file done"
+else	echo "Using existing $asmfile"
+fi
+
+echo "Compiling with C test program"
+gcc -Ic/ -o$exe c/instrout-test.c s/out-$uarch.S -no-pie -pthread
+echo "Assigning the CAP_SYS_NICE capability to the test program, which needs sudo"
+sudo setcap 'cap_sys_nice=eip' $exe
+echo "Compiling with C test program done"
+
+echo "Executing test program in all combinations, doing $iterations iterations"
+echo "If anything goes wrong here, re-run the command from the shellscript without the progressbar argument to see verbose output."
+set -x
+$python testall.py ./$exe testall $uarch $iterations progressbar
+set +x
+echo "Executing test program in all combinations done"
+
+echo "Executing in aggregate mode"
+echo "If anything goes wrong here, re-run the command from the shellscript without the progressbar argument to see verbose output."
+set -x
+$python testall.py aggregate progressbar
+set +x
+echo "Executing aggregate done"
+
+echo "Executing data plot, which will plot data for all archs in state/"
+set -x
+$python numpyplot.py
+set +x
+echo "Done"

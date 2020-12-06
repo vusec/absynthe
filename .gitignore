@@ -1,0 +1,9 @@
+env
+*.pickle
+*.npy
+*_titles.txt
+__pycache__
+out-*.S
+state-test-*.json
+test-*
+*.pyc

@@ -1,0 +1,22 @@
+Metadata-Version: 1.0
+Name: affinity
+Version: 0.1.0
+Summary: affinity - control processor affinity on windows and linux
+Home-page: http://cheeseshop.python.org/pypi/affinity
+Author: Sidnei da Silva
+Author-email: sidnei@enfoldsystems.com
+License: UNKNOWN
+Download-URL: http://cheeseshop.python.org/packages/source/a/affinity/affinity-0.1.0.tar.gz
+Description: 'affinity' provides a simple api for setting the processor affinity by
+        wrapping the specific underlying function calls of each
+        platform. works on windows (requires pywin32) and linux (kernel 2.6 or
+        patched 2.4).
+Keywords: process affinity linux windows scheduler
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Other Environment
+Classifier: License :: OSI Approved :: Python Software Foundation License
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Programming Language :: Python
+Classifier: Topic :: System :: Hardware :: Symmetric Multi-processing

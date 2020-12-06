@@ -1,0 +1,7 @@
+ujson
+numpy
+scipy
+six
+matplotlib
+cpuid
+tqdm

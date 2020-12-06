@@ -1,0 +1,2 @@
+#define CONFIG_USE_RDTSCP 1
+#undef CONFIG_USE_RDTSC 
