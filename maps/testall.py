@@ -177,6 +177,7 @@ def acquire(exe, uarch, num_measurements, with_progressbar, n_instructions=None)
                     if disable_progressbar:
                         print('timeout')
                     subprocess.call([ killall, '-9', os.path.basename(exe)], stdout=devnull, stderr=devnull)
+                    p.kill()
                     out,err = p.communicate()
             out = out.decode('ascii')
             err = err.decode('ascii')
