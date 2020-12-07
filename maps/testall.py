@@ -233,7 +233,7 @@ def acquire(exe, uarch, num_measurements, with_progressbar, n_instructions=None)
                     print('acquired all for writer', write)
                 break
             print('did not acquire all for writer %d - remaining %d - retrying' % (write,len(acquire_list)), end=' ')
-        acquire_set = set(baseline_list) - unreliable_set
+        acquire_set = set(acquire_list)
         if data_updated:
           missing_elements = acquire_set - set(list(alldata))
           if len(missing_elements) > 0:
