@@ -76,8 +76,13 @@ then	echo "Generating assembly file $asmfile"
 else	echo "Using existing $asmfile"
 fi
 
-echo "Compiling with C test program"
-gcc -Ic/ -o$exe c/instrout-test.c s/out-$uarch.S -no-pie -pthread
+if [ ! -e $exe ]
+then
+    echo "Compiling with C test program"
+    gcc -Ic/ -o$exe c/instrout-test.c s/out-$uarch.S -no-pie -pthread
+else
+    echo "$exe exists, not recreating"
+fi
 echo "Assigning the CAP_SYS_NICE capability to the test program, which needs sudo"
 sudo setcap 'cap_sys_nice=eip' $exe
 echo "Compiling with C test program done"
