@@ -44,8 +44,7 @@ else
 fi
 
 exe=bin/test-absynthe-$uarch
-killall -9 $exe || true
-sleep 5
+killall -9 `basename $exe` || true
 
 echo "Run full or quick test?"
 echo "Full test:  ALL instructions in NxN combinations, and many iterations"

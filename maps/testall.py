@@ -10,6 +10,7 @@ import cpus
 import numpy
 import tqdm
 import signal
+import time
 from io import StringIO
 from scipy import stats
 import xml.etree.ElementTree as ET
@@ -444,7 +445,6 @@ if __name__ == "__main__":
     global killall, measurements, warmup, devnull
     killall='/usr/bin/killall'
     devnull=open('/dev/null', 'w')
-    load1, load5, laod15 = os.getloadavg()
     if not os.path.exists(killall):
         raise Exception('need killall binary')
     if len(sys.argv) < 2:
@@ -459,13 +459,17 @@ if __name__ == "__main__":
         num_measurements=int(sys.argv[4])
         n_instructions=int(sys.argv[5])
         limit=0.9
-        if load1 > limit:
+        while True:
+            load1, load5, laod15 = os.getloadavg()
+            if load1 <= limit:
+                break
             print('Please run me only on an idle system.')
-            print('Found 1 minute load average of %.1f' % load1)
-            print('Expecting max 1 minute load average of %.1f' % limit)
+            print('Found 1 minute load average of %.2f' % load1)
+            print('Expecting max 1 minute load average of %.2f' % limit)
             print('This is protection against old measurement processes\nlingering and corrupting new measurements.')
-            print('Please check for lingering measurement processes.')
-            sys.exit(1)
+            print('Please check for lingering measurement processes. Trying again.')
+            print('')
+            time.sleep(5)
         acquire(exe, uarch, num_measurements, progressbar, n_instructions)
     if sys.argv[1] == 'aggregate':
         aggregate(progressbar)
