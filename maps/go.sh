@@ -43,6 +43,10 @@ else
     uarch="$1"
 fi
 
+exe=bin/test-absynthe-$uarch
+killall -9 $exe || true
+sleep 5
+
 echo "Run full or quick test?"
 echo "Full test:  ALL instructions in NxN combinations, and many iterations"
 echo "            for high quality signal. This can take a long time (few hours)."
@@ -66,7 +70,6 @@ fi
 echo "Mode: $modename Measurement iterations: $iterations Try how many instructions: $instrs_cutoff"
 
 asmfile=s/out-$uarch.S
-exe=bin/test-absynthe-$uarch
 
 echo uarch: $uarch asmfile: $asmfile executable: $exe
 if [ ! -s $asmfile ]
