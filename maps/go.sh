@@ -27,13 +27,11 @@ then    echo "Usage: $0 <uarch>"
         then
             echo -n "Detected uarch $uarch. Continue with uarch $uarch? (y/n) "
         else
-            uarch=SNB
             echo "Could not detect uarch TLA. But that doesn't mean we don't have it."
             echo ""
-            echo "If you know it, you can supply your uarch (or best-match uarch)"
-            echo "as TLA as arg to this script. Or we can continue with a,"
-            echo "hopefully reasonable, 'old' TLA uarch $uarch."
-            echo -n "Continue with subset uarch $uarch? (y/n) "
+            echo "If you know it, you can supply your uarch"
+            echo "as TLA as arg to this script, from the list above."
+            exit 1
         fi
         read yn
         if [ "$yn" != y ]
