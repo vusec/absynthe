@@ -43,7 +43,7 @@ else
     uarch="$1"
 fi
 
-exe=bin/test-absynthe-$uarch
+exe=bin/test-abs-$uarch
 killall -9 `basename $exe` || true
 
 echo "Run full or quick test?"
