@@ -94,6 +94,7 @@ int main(int argc, char *argv[])
 
         assert(parentcpu >= 0);
         assert(childcpu >= 0);
+        assert(childcpu != parentcpu);
         assert(writefunction >= 0);
         assert(writefunction < tablesize);
 
