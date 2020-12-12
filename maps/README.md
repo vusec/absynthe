@@ -32,7 +32,6 @@ are in `requirements-freeze.txt`.
 sudo apt-get install python3.8 gcc python3.8-dev virtualenv psmisc xmlstarlet
 virtualenv -p python3.8 env
 ./env/bin/pip install -r requirements.txt
-(cd affinity-0.1.0/ && ../env/bin/python setup.py build && ../env/bin/python setup.py install )
 ```
 
 requirements.txt is the human-friendly version of the python packages. I also did

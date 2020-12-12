@@ -14,12 +14,6 @@ import time
 from io import StringIO
 from scipy import stats
 import xml.etree.ElementTree as ET
-try:
-    import affinity
-except:
-    print('Importing of affinity module failed.')
-    print('Please check the installation instructions in README.md.')
-    sys.exit(1)
 
 if __name__ != "__main__":
     raise Exception('not intended for import but for execution')
@@ -53,17 +47,21 @@ def get_work_cpus():
         Work cpus are the processors (logical processors) that are used to execute the
         cross-thread measurement worklads. We allow all the LP's in the system to do
         this, except for the LP's for one physical core. These are the 'master cpus,'
-        reserved for the parent process, the python interpreter. We use the affinity
-        module to pin the python interpreter to these LP's. We return the rest of the
-        LP's.
+        reserved for the parent process, the python interpreter. We use the
+        os.sched_*affinity functions to pin the python interpreter to these LP's.
+        We return the rest of the LP's.
         """
         cpulist=cpus.corelist(True)
-        master_cpus = cpulist.pop()
-        mask=0
-        for c in master_cpus:
-                mask |= 1 << c
-        affinity.set_process_affinity_mask(0,mask)
+        master_cpus = set(cpulist.pop())
+        assert len(master_cpus) == 2 # just in case there are duplicates or not enough or too many entries
+        current_affinity = os.sched_getaffinity(0)
+        assert master_cpus.issubset(current_affinity)
+        print('current affinity mask: %s' % current_affinity)
         print('master cpus (for python):', master_cpus,file=sys.stderr)
+        os.sched_setaffinity(0, master_cpus)
+        current_affinity = os.sched_getaffinity(0)
+        print('current mask: %s' % current_affinity)
+        assert current_affinity == master_cpus
         print('worker cpus:', cpulist,file=sys.stderr)
         return cpulist
 
