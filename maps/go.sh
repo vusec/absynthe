@@ -53,11 +53,11 @@ echo -n "Full or Quick? (f/Q) "
 read fullquick
 if [ "$fullquick" = f -o "$fullquick" = F ]
 then    modename=full
-        iterations=2000
+        iterations=20000
         instrs_cutoff=0
 elif [ "$fullquick" = q -o "$fullquick" = Q -o "$fullquick" = "" ]
 then    modename=quick
-        iterations=200
+        iterations=20000
         instrs_cutoff=500
 else
         echo "Do not understand response"
