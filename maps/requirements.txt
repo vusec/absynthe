@@ -5,3 +5,4 @@ six
 matplotlib
 cpuid
 tqdm
+Pillow>=8.1.1

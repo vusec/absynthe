@@ -45,10 +45,10 @@ exe=bin/test-abs-$uarch
 killall -9 `basename $exe` || true
 
 echo "Run full or quick test?"
-echo "Full test:  ALL instructions in NxN combinations, and many iterations"
-echo "            for high quality signal. This can take a long time (few hours)."
-echo "Quick test: 500 instructions in NxN combinations, and fewer iterations"
-echo "            than in Full mode. This should take a coffee amount of time."
+echo "Full test:  ALL instructions in NxN combinations,"
+echo "            This can take a long time (few hours)."
+echo "Quick test: 500 instructions in NxN combinations"
+echo "            This should take a coffee amount of time."
 echo -n "Full or Quick? (f/Q) "
 read fullquick
 if [ "$fullquick" = f -o "$fullquick" = F ]
@@ -57,8 +57,8 @@ then    modename=full
         instrs_cutoff=0
 elif [ "$fullquick" = q -o "$fullquick" = Q -o "$fullquick" = "" ]
 then    modename=quick
-        iterations=20000
-        instrs_cutoff=500
+        instrs_cutoff=100
+        iterations=15000
 else
         echo "Do not understand response"
         exit 1
