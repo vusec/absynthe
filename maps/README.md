@@ -30,7 +30,7 @@ are in `requirements-freeze.txt`.
 
 ```
 sudo apt-get install python3.8 gcc python3.8-dev virtualenv psmisc xmlstarlet
-virtualenv -p python3.8 env
+python3.8 -mvenv env
 ./env/bin/pip install -r requirements.txt
 ```
 
