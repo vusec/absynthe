@@ -3,7 +3,7 @@
 ## Requirements
 
 For smoothest experience, please run on a new version of
-Ubuntu Linux x86-64. I tried it on Ubuntu 20.04.
+Ubuntu Linux x86-64. I tried it on Ubuntu 20.10.
 
 The code expects 2 cores to be available and HT to be on (so 4
 visible processors).
