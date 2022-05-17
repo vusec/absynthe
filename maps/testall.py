@@ -233,10 +233,11 @@ def acquire(exe, uarch, num_measurements, with_progressbar, n_instructions=None)
                 break
             print('did not acquire all for writer %d - remaining %d - retrying' % (write,len(acquire_list)), end=' ')
         acquire_set = set(acquire_list)
+        assert acquire_set <= set(list(alldata))
         if data_updated:
           missing_elements = acquire_set - set(list(alldata))
           if len(missing_elements) > 0:
-              print('wanted:', len(acquire_set), 'got:', len(alldata), 'missing elements:', acquire_set - set(list(alldata)))
+              print('wanted:', len(acquire_set), 'elements. got:', len(alldata), 'elements. missing elements:', acquire_set - set(list(alldata)))
           assert acquire_set <= set(list(alldata))
         if set(alldata_summary) != set(alldata):
           if disable_progressbar:

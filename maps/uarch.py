@@ -1,4 +1,4 @@
-import cpuid
+import archspec.cpu
 import sys
 
 long_to_short = {
@@ -24,7 +24,9 @@ long_to_short = {
 short_to_long = { long_to_short[short]: short for short in long_to_short }
 
 if __name__ == "__main__":
-   cpu_uarch=cpuid.cpu_microarchitecture()[0]
+   host = archspec.cpu.host()
+   cpu_uarch=str(host)
+   print('detected uarch name %s (long name)' % cpu_uarch, file=sys.stderr)
    if cpu_uarch in long_to_short:
         tla = long_to_short[cpu_uarch]
         print('Found a uarch of %s, TLA is %s.' % (cpu_uarch, tla), file=sys.stderr)

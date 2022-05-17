@@ -23,6 +23,13 @@ then    echo "Usage: $0 <uarch>"
         echo "The arch should be an arch that instructions.xml knows about, i.e.: "
         xmlstarlet sel -t -m "//architecture" -v "@name" -n <$xml | sort | uniq
         uarch="`$python uarch.py || true`"
+        words=`echo $uarch  | wc -w`
+        if [ $words -ne 1 ]
+        then
+            echo "uarch output should only be one word, ignoring."
+            echo "found how many words: $words faulty output: $uarch"
+            uarch=""
+        fi
         if [ "$uarch" != "" ]
         then
             echo -n "Detected uarch $uarch. Continue with uarch $uarch? (y/n) "
