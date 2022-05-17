@@ -4,5 +4,4 @@ scipy
 six
 matplotlib
 tqdm
-Pillow
 archspec
