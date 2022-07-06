@@ -12,4 +12,4 @@ python-dateutil==2.8.2
 scipy==1.8.0
 six==1.16.0
 tqdm==4.64.0
-ujson==5.2.0
+ujson==5.4.0
